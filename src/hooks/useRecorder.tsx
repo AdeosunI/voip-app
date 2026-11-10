@@ -1,10 +1,24 @@
-import { useCallback, useRef, useState, type RefObject } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import { handleDownload } from "../utils/helpers";
 
 const useRecorder = (streamRef: RefObject<MediaStream | null>) => {
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunks = useRef<Blob[]>([]);
+
+  useEffect(() => {
+    return () => {
+      if (mediaRecorderRef.current?.state === "recording") {
+        mediaRecorderRef.current?.stop();
+      }
+    };
+  }, []);
 
   const startRecording = useCallback(() => {
     mediaRecorderRef.current = new MediaRecorder(streamRef.current!);
