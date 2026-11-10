@@ -20,6 +20,13 @@ const useStream = () => {
         setMicIsEnabled(false);
         setStreamIsLive(false);
 
+        if (nextCameraId) {
+          setCameraId(nextCameraId);
+        }
+        if (nextMicId) {
+          setMicId(nextMicId);
+        }
+
         const nextStream = await navigator.mediaDevices.getUserMedia({
           video: nextCameraId ? { deviceId: { exact: nextCameraId } } : true,
           audio: nextMicId ? { deviceId: { exact: nextMicId } } : true,
