@@ -54,8 +54,6 @@ function App() {
 
   return (
     <main className="device-console">
-      <h1>Devices</h1>
-
       <div className="video-shell">
         <button
           type="button"
