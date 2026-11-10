@@ -1,0 +1,64 @@
+.video-frame {
+  position: relative;
+  display: grid;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 480px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  place-items: center;
+  overflow: hidden;
+  border: 0;
+  border-radius: 4px;
+  background: #17211f;
+  color: #e8efeb;
+  font: inherit;
+  font-size: 13px;
+}
+
+.video-frame video {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.video-frame button:focus-visible {
+  outline: 2px solid var(--console-accent);
+  outline-offset: 3px;
+}
+
+.stream-controls {
+  position: absolute;
+  z-index: 2;
+  bottom: 16px;
+  left: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.stream-control {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 28%);
+  border-radius: 50%;
+  color: #fff;
+  background: rgb(17 31 27 / 82%);
+  cursor: pointer;
+}
+
+.stream-control:hover {
+  background: rgb(17 31 27 / 96%);
+}
+
+.stream-control img {
+  display: block;
+  width: 20px;
+  height: 20px;
+}

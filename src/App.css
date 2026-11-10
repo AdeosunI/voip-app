@@ -1,0 +1,129 @@
+.device-console {
+  --console-ink: #1d332f;
+  --console-muted: #687a75;
+  --console-line: #dce5e1;
+  --console-accent: #147a64;
+  --console-wash: #f3f8f5;
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  min-height: 100svh;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 20px;
+  padding: 32px;
+  color: var(--console-ink);
+  background: #f7f9f8;
+  color-scheme: light;
+  text-align: left;
+  font-size: 15px;
+}
+
+.device-console h1 {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+.video-shell {
+  display: flex;
+  width: min(100%, 860px);
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 0 auto;
+}
+
+.record-button {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff4d4d, #d92626);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgb(217 38 38 / 28%);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.record-button::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgb(255 255 255 / 18%);
+}
+
+.record-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgb(217 38 38 / 34%);
+}
+
+.record-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.record-button:focus-visible {
+  outline: 3px solid rgb(217 38 38 / 28%);
+  outline-offset: 3px;
+}
+
+.record-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.record-button.is-recording {
+  background: #8f1d24;
+  box-shadow: 0 10px 22px rgb(143 29 36 / 28%);
+}
+
+.record-button.is-recording::before {
+  border-radius: 2px;
+  animation: recording-pulse 1.2s ease-in-out infinite;
+}
+
+.record-button.is-recording:hover:not(:disabled) {
+  background: #75171d;
+  box-shadow: 0 14px 28px rgb(117 23 29 / 34%);
+}
+
+@keyframes recording-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .record-button.is-recording::before {
+    animation: none;
+  }
+}
+
+.error-message {
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  color: #a43832;
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .device-console {
+    gap: 16px;
+    padding: 24px 16px;
+  }
+}
