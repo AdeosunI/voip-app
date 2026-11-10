@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useEffectEvent,
+} from "react";
 
 const useStream = () => {
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
@@ -56,76 +62,65 @@ const useStream = () => {
     [],
   );
 
+  const handleDeviceChange = useEffectEvent(async (isActive: () => boolean) => {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      if (!isActive()) return;
+
+      const nextCameras = devices.filter((d) => d.kind === "videoinput");
+      const nextMics = devices.filter((d) => d.kind === "audioinput");
+
+      setCameras(nextCameras);
+      setMics(nextMics);
+
+      const nextCameraId = nextCameras.some((d) => d.deviceId === cameraId)
+        ? cameraId
+        : (nextCameras[0]?.deviceId ?? null);
+
+      const nextMicId = nextMics.some((d) => d.deviceId === micId)
+        ? micId
+        : (nextMics[0]?.deviceId ?? null);
+
+      if (nextCameraId !== cameraId || nextMicId !== micId) {
+        if (nextCameraId && nextMicId) {
+          await showStream(nextCameraId, nextMicId);
+        }
+      }
+    } catch {
+      if (isActive()) {
+        setErrorMessage("Could not read the available media devices.");
+      }
+    }
+  });
+
   useEffect(() => {
-    let cancelled = false;
+    let isActive = false;
 
     async function initialize() {
       const stream = await showStream();
       if (!stream) return;
 
-      if (cancelled) {
+      if (!isActive) {
         stream.getTracks().forEach((track) => track.stop());
         return;
       }
 
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      if (cancelled) return;
-
-      setCameras(devices.filter((d) => d.kind === "videoinput"));
-      setMics(devices.filter((d) => d.kind === "audioinput"));
+      handleDeviceChange(() => isActive);
     }
+
+    const handler = () => {
+      handleDeviceChange(() => isActive);
+    };
 
     void initialize();
+    navigator.mediaDevices.addEventListener("devicechange", handler);
 
     return () => {
-      cancelled = true;
+      isActive = true;
       streamRef.current?.getTracks().forEach((track) => track.stop());
+      navigator.mediaDevices.removeEventListener("devicechange", handler);
     };
   }, [showStream]);
-
-  useEffect(() => {
-    let active = true;
-
-    async function handleDeviceChange() {
-      try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        if (!active) return;
-
-        const nextCameras = devices.filter((d) => d.kind === "videoinput");
-        const nextMics = devices.filter((d) => d.kind === "audioinput");
-
-        setCameras(nextCameras);
-        setMics(nextMics);
-
-        const nextCameraId = nextCameras.some((d) => d.deviceId === cameraId)
-          ? cameraId
-          : (nextCameras[0]?.deviceId ?? null);
-
-        const nextMicId = nextMics.some((d) => d.deviceId === micId)
-          ? micId
-          : (nextMics[0]?.deviceId ?? null);
-
-        if (nextCameraId !== cameraId || nextMicId !== micId) {
-          if (nextCameraId && nextMicId) {
-            await showStream(nextCameraId, nextMicId);
-          }
-        }
-      } catch {
-        if (active) {
-          setErrorMessage("Could not read the available media devices.");
-        }
-      }
-    }
-
-    navigator.mediaDevices.addEventListener("devicechange", handleDeviceChange);
-    return () => {
-      active = false;
-      navigator.mediaDevices.removeEventListener(
-        "devicechange",
-        handleDeviceChange,
-      );
-    };
-  }, [cameraId, micId, showStream]);
 
   return {
     cameras,
