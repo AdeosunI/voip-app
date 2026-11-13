@@ -1,7 +1,6 @@
 import "./App.css";
+import { useRecorder, useStream } from "@adeosuni/react-media-kit";
 import Selector from "./components/Selector";
-import useStream from "./hooks/useStream";
-import useRecorder from "./hooks/useRecorder";
 import VideoPlayer from "./components/VideoPlayer";
 
 function App() {
